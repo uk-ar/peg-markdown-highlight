@@ -2,9 +2,9 @@
 /* PEG Markdown Highlight
  * Copyright 2011-2012 Ali Rantakari -- http://hasseg.org
  * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
- * 
+ *
  * pmh_grammar.leg
- * 
+ *
  * This is a slightly adapted version of the PEG grammar from John MacFarlane's
  * peg-markdown compiler.
  */
@@ -386,8 +386,7 @@ StyleBlock =    < s:LocMarker InStyleTags >
 Inlines  =  ( !Endline Inline
               | Endline &Inline )+ Endline?
 
-Inline  = Str
-        | Endline
+Inline  = Endline
         | UlOrStarLine
         | Space
         | Strong
@@ -401,10 +400,15 @@ Inline  = Str
         | Entity
         | EscapedChar
         | Symbol
+        | Str
 
 Space = Spacechar+
 
-Str = NormalChar (NormalChar | '_'+ &Alphanumeric)*
+Str = < NormalChar (NormalChar | '_'+ &Alphanumeric)* >
+      { ADD(elem(pmh_STR)); }
+      #{ ADD(elem_s(pmh_STR)); }
+      #{ printf("yy:%s",yytext); }
+      #< s:NormalChar (NormalChar | '_'+ &Alphanumeric)* >
 
 EscapedChar =   '\\' !Newline [-\\`|*_{}[\]()#+.!><]
 
@@ -528,18 +532,19 @@ TitleDouble = '"' ( !( '"' Sp ( ')' | Newline ) ) . )* '"'
 AutoLink = AutoLinkUrl | AutoLinkEmail
 
 AutoLinkUrl =  < s:LocMarker { s->type = pmh_AUTO_LINK_URL; }
-               '<'
-                 < [A-Za-z]+ "://" ( !Newline !'>' . )+ >
+               '<'?
+                 < [A-Za-z]+ "://" ( !Newline !'>' !Spacechar . )+ >
+                 #< [A-Za-z]+ "://" ( !Newline !'>' . )+ >
                  { s->address = COPY_YYTEXT_ORIG(); }
-               '>' >
+               '>'? >
                {
                 s->end = thunk->end;
-                ADD(s);
+                //ADD(s);
                }
 
 AutoLinkEmail = < s:LocMarker { s->type = pmh_AUTO_LINK_EMAIL; }
                 '<'
-                  ( "mailto:" )? < [-A-Za-z0-9+_./!%~$]+ '@' ( !Newline !'>' . )+ >
+                  ( "mailto:" )? < [-A-Za-z0-9+_./!%~$]+ '@' ( !Newline !'>' !Spacechar . )+ >
                   { s->address = COPY_YYTEXT_ORIG(); }
                 '>' >
                {
@@ -670,5 +675,3 @@ RawNoteBlock =  ( !BlankLine OptionallyIndentedLine )+
                 ( BlankLine* )
 
 %%
-
-

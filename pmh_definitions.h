@@ -1,7 +1,7 @@
 /* PEG Markdown Highlight
  * Copyright 2011-2012 Ali Rantakari -- http://hasseg.org
  * Licensed under the GPL2+ and MIT licenses (see LICENSE for more info).
- * 
+ *
  * pmh_definitions.h
  */
 
@@ -15,12 +15,12 @@
 
 /**
 * \brief Element types.
-* 
+*
 * The first (documented) ones are language element types.
-* 
+*
 * The last (non-documented) ones are utility types used
 * by the parser itself.
-* 
+*
 * \sa pmh_element
 */
 typedef enum
@@ -37,7 +37,7 @@ typedef enum
     pmh_LIST_BULLET,        /**< Bullet for an unordered list item */
     pmh_LIST_ENUMERATOR,    /**< Enumerator for an ordered list item */
     pmh_COMMENT,            /**< (HTML) Comment */
-    
+
     // Code assumes that pmh_H1-6 are in order.
     pmh_H1,                 /**< Header, level 1 */
     pmh_H2,                 /**< Header, level 2 */
@@ -45,45 +45,45 @@ typedef enum
     pmh_H4,                 /**< Header, level 4 */
     pmh_H5,                 /**< Header, level 5 */
     pmh_H6,                 /**< Header, level 6 */
-    
+
     pmh_BLOCKQUOTE,         /**< Blockquote */
     pmh_VERBATIM,           /**< Verbatim (e.g. block of code) */
     pmh_HTMLBLOCK,          /**< Block of HTML */
     pmh_HRULE,              /**< Horizontal rule */
     pmh_REFERENCE,          /**< Reference */
     pmh_NOTE,               /**< Note */
-    
+    pmh_STR,
     // Utility types used by the parser itself:
-    
+
     // List of pmh_RAW element lists, each to be processed separately from
     // others (for each element in linked lists of this type, `children` points
     // to a linked list of pmh_RAW elements):
     pmh_RAW_LIST,   /**< Internal to parser. Please ignore. */
-    
+
     // Span marker for positions in original input to be post-processed
     // in a second parsing step:
     pmh_RAW,        /**< Internal to parser. Please ignore. */
-    
+
     // Additional text to be parsed along with spans in the original input
     // (these may be added to linked lists of pmh_RAW elements):
     pmh_EXTRA_TEXT, /**< Internal to parser. Please ignore. */
-    
+
     // Separates linked lists of pmh_RAW elements into parts to be processed
     // separate from each other:
     pmh_SEPARATOR,  /**< Internal to parser. Please ignore. */
-    
+
     // Placeholder element used while parsing:
     pmh_NO_TYPE,    /**< Internal to parser. Please ignore. */
-    
+
     // Linked list of *all* elements created while parsing:
-    pmh_ALL         /**< Internal to parser. Please ignore. */
+    pmh_ALL,        /**< Internal to parser. Please ignore. */
 } pmh_element_type;
 
 /**
 * \brief Number of types in pmh_element_type.
 * \sa pmh_element_type
 */
-#define pmh_NUM_TYPES 30
+#define pmh_NUM_TYPES 31
 
 /**
 * \brief Number of *language element* types in pmh_element_type.
